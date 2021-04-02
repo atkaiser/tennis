@@ -21,9 +21,10 @@ def clip_video(times, original_video_path, output_video_path):
     :param output_video_path: The path to save the output video to
     :return: Doesn't return anything, but outputs the new video to output_video_path
     """
+    original_video = VideoFileClip(original_video_path, fps_source='fps')
     clips = []
     for time_pair in times:
-        clip = VideoFileClip(original_video_path, fps_source='fps').subclip(time_pair[0], time_pair[1])
+        clip = original_video.subclip(time_pair[0], time_pair[1])
         clips.append(clip)
     final_clip = concatenate_videoclips(clips)
     final_clip.write_videofile(output_video_path)

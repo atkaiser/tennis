@@ -4,6 +4,7 @@ import os
 import video_tools
 import ai
 import helpers
+import time
 
 """
 Public methods that can be used by scripts
@@ -32,16 +33,31 @@ def split_video(video_file_path, original_fps, tmp_dir):
     :param tmp_dir:
     :return:
     """
+    start = time.time()
+    # This part takes some time, but isn't the longest
     frames = video_tools.get_video_images(video_file_path, original_fps, 0.1, tmp_dir)
+    print(time.time() - start)
+    start = time.time()
+    # This part takes the longest time wise (could be parallelized)
     ai.find_prob_of_interesting(frames)
+    print(time.time() - start)
     interesting_ranges = helpers.find_initial_possibilities(1, .25, 0.7, frames)
+    print("Found {} interesting ranges".format(len(interesting_ranges)))
+    # print(interesting_ranges)
     # Maybe put in another loop later, but for now it isn't really needed
     # video_tools.get_more_ranges(frames, interesting_ranges)
     # ai.find_prob_of_interesting(frames)
     # clip_frame_ranges = helpers.find_clip_ranges()
     clip_times = video_tools.convert_frames_to_times(interesting_ranges, frames)
-    name = os.path.splitext(os.path.basename(video_file_path))[0]
-    video_tools.clip_video(clip_times, video_file_path, tmp_dir + "/" + name + "_imp.mp4")
+    print(clip_times)
+    if clip_times:
+        name = os.path.splitext(os.path.basename(video_file_path))[0]
+        start = time.time()
+        # This part takes awhile
+        video_tools.clip_video(clip_times, video_file_path, tmp_dir + "/" + name + "_imp.mp4")
+        print(time.time() - start)
+    else:
+        print("Couldn't find any interesting clips")
 
 
 if __name__ == "__main__":
