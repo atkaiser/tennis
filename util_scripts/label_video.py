@@ -231,7 +231,7 @@ def get_fps(video_file_path):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Create a label.json file for a video.")
+    parser = argparse.ArgumentParser(description="TODO")
     parser.add_argument("--dir", help="Path to directory where all the training videos are.")
     # parser.add_argument("--tmp_dir", help="Path to the temp dir", default="tmp")
     # parser.add_argument("--fps", type=int, default=240, help="The original fps of the video")

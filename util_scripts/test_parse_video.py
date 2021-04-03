@@ -1,8 +1,8 @@
 from fastbook import *
 from fastai.vision.widgets import *
 import cv2
-# import plotly.graph_objects as go
 from time import time
+import argparse
 
 def moving_average(numbers, window_size):
     if window_size % 2 == 0:
@@ -20,18 +20,22 @@ def moving_average(numbers, window_size):
     return moving_averages
 
 
-learn_inf = load_learner('../models/new_forehand_backhand/export.pkl').to_fp16()
+parser = argparse.ArgumentParser(description="TODO")
+parser.add_argument("--video_path", help="Path to directory where all the training videos are.",
+                    default="../data/to_process/VID_20200218_131507.mp4")
+parser.add_argument("--fps", type=int, default=-1,
+                    help="The original fps of the video, if not supplied this will try to be guessed using ffmpeg")
+parser.add_argument("--model", default="../models/new_forehand_backhand/export.pkl", help="Path to the file containing the model")
+
+args = parser.parse_args()
+
+learn_inf = load_learner(args.model)
 vocab = learn_inf.dls.vocab
-learn_inf.no_bar()
-learn_inf.no_logging()
-learn_inf.no_mbar()
 
 start_time = time()
-# cap = cv2.VideoCapture("/storage/my_data/vids/short.mp4")
-# cap = cv2.VideoCapture("/storage/my_data/vids/rally_test.mp4")
-cap = cv2.VideoCapture("../data/to_process/VID_20200218_131507.mp4")
+cap = cv2.VideoCapture(args.video_path)
 
-fps = 30
+fps = args.fps
 predict_every = 8
 
 cap.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
@@ -74,6 +78,36 @@ end_time = time()
 print("Total seconds: {}".format(end_time - start_time))
 
 vid = [str(int(sec / 60)) + ":" + str(int(sec % 60)) for sec in x]
+
+nothing_index = list(learn_inf.dls.vocab).index("nothing")
+
+# At the end we want a frame number for contact and type of shot for each frame
+# Simple algorithm:
+# 1. Find all possible shots into a list
+# 2. Go through that list and combine all shots that could be for the same thing
+possible_shots = []
+for i, row in enumerate(results):
+    if row[nothing_index] < 0.5:
+        possible_shots.append((row[nothing_index].item(), x[i], vocab[row.argmax(dim=-1).item()]))
+
+# print(possible_shots)
+
+from scipy import signal
+prob_something = [1 - frame[0] for frame in possible_shots]
+peaks, _ = signal.find_peaks(prob_something, distance=int(480/predict_every))
+print(peaks)
+
+import matplotlib.pyplot as plt
+
+plt.plot([possible_shots[peak][1] for peak in peaks], [prob_something[peak] for peak in peaks], "xr")
+plt.plot([frame[1] for frame in possible_shots], prob_something)
+plt.show()
+
+
+# start_of_current_shot = possible_shots[0]
+# for frame in possible_shots[1:]:
+#     if frame
+#     print(frame)
 
 # Graph
 # window = 120
