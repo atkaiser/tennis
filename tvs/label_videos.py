@@ -48,7 +48,7 @@ def milli_time():
 
 
 def main(video_dir, video_speed):
-    # First find all the videos int he file
+    # First find all the videos in the directory
     videos = get_movie_files(video_dir)
 
     todo_videos = []
@@ -217,9 +217,9 @@ def main(video_dir, video_speed):
                 new_action["start"] = state_changes[i - 2].frame_num / video_fps
                 new_action["contact"] = state_changes[i - 1].frame_num / video_fps
                 new_action["end"] = change.frame_num / video_fps
-                new_action["start_frame"] = state_changes[i - 2].frame_num
-                new_action["contact_frame"] = state_changes[i - 1].frame_num
-                new_action["end_frame"] = change.frame_num
+                new_action["start_frame"] = int(state_changes[i - 2].frame_num)
+                new_action["contact_frame"] = int(state_changes[i - 1].frame_num)
+                new_action["end_frame"] = int(change.frame_num)
                 all_actions.append(new_action)
 
         with open(join(video_dir, video_name + ".json"), "a") as f:
