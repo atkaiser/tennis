@@ -12,7 +12,16 @@ from video_tools import (
     get_real_world_fps,
 )
 
-# TODO I should parallelize this (maybe?
+# TODO I should parallelize this (maybe? Or maybe wait for a parallelized video parser)
+
+# We are taking videos and creating images, for now we sample this number
+# of frames out of each section of each shot. Increasing these will produce
+# more files.
+NUM_NOTHING_FRAMES = 2
+NUM_SET_UP_FRAMES = 2
+NUM_CONTACT_FRAMES = 2
+NUM_FORWARD_FOLLOW_THROUGH_FRAMES = 2
+NUM_BACKWARD_FOLLOW_THROUGH_FRAMES = 2
 
 
 def main(video_dir, output_dir, validation_percent):
@@ -57,32 +66,30 @@ def main(video_dir, output_dir, validation_percent):
             end_forward_motion_frame = int(
                 action["contact_frame"] + int(0.245 * end_range)
             )
-            for frame in get_sample(
-                range(last_action_frame, int(action["start_frame"])), 2
-            ):
+            for frame in get_sample(last_action_frame, int(action["start_frame"]), NUM_NOTHING_FRAMES):
                 selected_frames[frame] = "nothing"
             for frame in get_sample(
                 int(action["start_frame"]),
                 start_contact_frame,
-                2,
+                NUM_SET_UP_FRAMES,
             ):
                 selected_frames[frame] = action["label"] + "_set_up"
             for frame in get_sample(
                 start_contact_frame,
                 end_contact_frame,
-                2,
+                NUM_CONTACT_FRAMES,
             ):
                 selected_frames[frame] = action["label"] + "_contact"
             for frame in get_sample(
                 end_contact_frame,
                 end_forward_motion_frame,
-                2,
+                NUM_FORWARD_FOLLOW_THROUGH_FRAMES,
             ):
                 selected_frames[frame] = action["label"] + "_forward_follow_through"
             for frame in get_sample(
                 end_forward_motion_frame,
                 int(action["end_frame"]),
-                2,
+                NUM_BACKWARD_FOLLOW_THROUGH_FRAMES,
             ):
                 selected_frames[frame] = action["label"] + "_backward_follow_through"
 
@@ -116,13 +123,15 @@ def main(video_dir, output_dir, validation_percent):
                     shot_type,
                     "{}-{}.jpg".format(vid_name, int(frame_num)),
                 )
-                parent_dir = os.path.join(video_dir, "all_pics", folder_type, shot_type)
-                pathlib.Path(parent_dir).mkdir(parents=True, exist_ok=True)
-                # print("Writing {} to {}".format(frame_num, frame_path))
+                pathlib.Path(frame_path).parent.mkdir(parents=True, exist_ok=True)
                 cv2.imwrite(frame_path, frame)
 
 
 def get_sample(start_frame, end_frame, number_of_frames):
+    """
+    Take in a start and end frame number and return an iterable with a max size of
+    number_of_frames that has a sample of numbers between start and end.
+    """
     frame_len = end_frame - start_frame
     if frame_len < number_of_frames:
         return range(start_frame, end_frame)
@@ -131,7 +140,6 @@ def get_sample(start_frame, end_frame, number_of_frames):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(
         description="Create a label.json file for a video."
     )
@@ -152,9 +160,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.output_dir:
-        output_dir = args.output_dir
+        output_directory = args.output_dir
     else:
         path = pathlib.Path(args.dir)
-        output_dir = str(path.parent)
+        output_directory = str(path.parent)
 
-    main(args.dir, output_dir, args.validation_percent)
+    main(args.dir, output_directory, args.validation_percent)
