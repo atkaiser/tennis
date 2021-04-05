@@ -10,6 +10,14 @@ from video_tools import (
     get_total_num_of_frames
 )
 
+"""
+Scrit that takes a directory that has videos that have corresponding json files that list
+when strokes happened in them. It will then output a data set of images that has each of the
+different phases of a stroke in a different directory.
+
+author akaiser 2021-04-02
+"""
+
 # TODO I should parallelize this (maybe? Or maybe wait for a parallelized video parser)
 
 # We are taking videos and creating images, for now we sample this number
