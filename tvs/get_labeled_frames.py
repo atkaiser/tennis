@@ -7,9 +7,7 @@ import pathlib
 from os.path import isfile, join, splitext, basename
 from video_tools import (
     get_movie_files,
-    get_total_num_of_frames,
-    get_video_fps,
-    get_real_world_fps,
+    get_total_num_of_frames
 )
 
 # TODO I should parallelize this (maybe? Or maybe wait for a parallelized video parser)
