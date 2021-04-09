@@ -11,7 +11,7 @@ from video_tools import (
 )
 
 """
-Scrit that takes a directory that has videos that have corresponding json files that list
+Script that takes a directory that has videos that have corresponding json files that list
 when strokes happened in them. It will then output a data set of images that has each of the
 different phases of a stroke in a different directory.
 
