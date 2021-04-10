@@ -60,9 +60,7 @@ while fvs.more():
     wait_start = milli_time()
     non_wait_time = wait_start - last_shown_frame_time
     non_wait_times.append(non_wait_time)
-    wait_amount = max(
-        1, round((this_loop_desired_time - non_wait_time) - 4.5)
-    )
+    wait_amount = max(1, round((this_loop_desired_time - non_wait_time) - 4.5))
     if not this_loop_desired_time < 5:
         pressed_key_value = cv2.waitKey(wait_amount)
     last_shown_frame_time = milli_time()
@@ -88,10 +86,8 @@ print("avg extra wait: {}".format(sum(extra_wait_times) / len(extra_wait_times))
 print("desired_avg loop time: {}".format(usual_wait_amount))
 print("elapsed: {}".format(elapsed))
 print("frames: {}".format(frames))
-print('FPS: {}'.format(frames / elapsed))
+print("FPS: {}".format(frames / elapsed))
 print("desired fps: {}".format(desired_fps))
-
-
 
 
 #
@@ -100,4 +96,3 @@ print("desired fps: {}".format(desired_fps))
 # while fvs.more():
 #     frame = fvs.read()
 #     # cv2.imshow("Frame", frame)
-

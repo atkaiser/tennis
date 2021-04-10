@@ -41,7 +41,7 @@ def split_video(video_file_path, original_fps, tmp_dir):
     # This part takes the longest time wise (could be parallelized)
     ai.find_prob_of_interesting(frames)
     print(time.time() - start)
-    interesting_ranges = helpers.find_initial_possibilities(1, .25, 0.7, frames)
+    interesting_ranges = helpers.find_initial_possibilities(1, 0.25, 0.7, frames)
     print("Found {} interesting ranges".format(len(interesting_ranges)))
     # print(interesting_ranges)
     # Maybe put in another loop later, but for now it isn't really needed
@@ -54,7 +54,9 @@ def split_video(video_file_path, original_fps, tmp_dir):
         name = os.path.splitext(os.path.basename(video_file_path))[0]
         start = time.time()
         # This part takes awhile
-        video_tools.clip_video(clip_times, video_file_path, tmp_dir + "/" + name + "_imp.mp4")
+        video_tools.clip_video(
+            clip_times, video_file_path, tmp_dir + "/" + name + "_imp.mp4"
+        )
         print(time.time() - start)
     else:
         print("Couldn't find any interesting clips")
@@ -62,10 +64,14 @@ def split_video(video_file_path, original_fps, tmp_dir):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Split a tennis video into just it's interesting parts.")
+    parser = argparse.ArgumentParser(
+        description="Split a tennis video into just it's interesting parts."
+    )
     parser.add_argument("--video", help="Path to the video file")
     parser.add_argument("--tmp_dir", help="Path to the temp dir", default="tmp")
-    parser.add_argument("--fps", type=int, default=0, help="The original fps of the video")
+    parser.add_argument(
+        "--fps", type=int, default=0, help="The original fps of the video"
+    )
     args = parser.parse_args()
 
     split_video(args.video, args.fps, args.tmp_dir)

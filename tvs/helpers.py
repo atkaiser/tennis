@@ -45,7 +45,7 @@ def get_sha1_of_file(file_path):
     """
     buf_size = 65536  # lets read stuff in 64kb chunks!
     sha1 = hashlib.sha1()
-    with open(file_path, 'rb') as f:
+    with open(file_path, "rb") as f:
         data = f.read(buf_size)
         while data:
             sha1.update(data)

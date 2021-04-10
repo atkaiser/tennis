@@ -4,6 +4,7 @@ import cv2
 from time import time
 import argparse
 
+
 def moving_average(numbers, window_size):
     if window_size % 2 == 0:
         window_size -= 1
@@ -21,11 +22,22 @@ def moving_average(numbers, window_size):
 
 
 parser = argparse.ArgumentParser(description="TODO")
-parser.add_argument("--video_path", help="Path to directory where all the training videos are.",
-                    default="../data/to_process/VID_20200218_131507.mp4")
-parser.add_argument("--fps", type=int, default=-1,
-                    help="The original fps of the video, if not supplied this will try to be guessed using ffmpeg")
-parser.add_argument("--model", default="../models/new_forehand_backhand/export.pkl", help="Path to the file containing the model")
+parser.add_argument(
+    "--video_path",
+    help="Path to directory where all the training videos are.",
+    default="../data/to_process/VID_20200218_131507.mp4",
+)
+parser.add_argument(
+    "--fps",
+    type=int,
+    default=-1,
+    help="The original fps of the video, if not supplied this will try to be guessed using ffmpeg",
+)
+parser.add_argument(
+    "--model",
+    default="../models/new_forehand_backhand/export.pkl",
+    help="Path to the file containing the model",
+)
 
 args = parser.parse_args()
 
@@ -63,14 +75,18 @@ while cap.isOpened():
     batch.append(frame)
     if len(batch) >= batch_size:
         dl = learn_inf.dls.test_dl(batch, num_workers=0)
-        inp, preds, _, dec_preds = learn_inf.get_preds(dl=dl, with_input=True, with_decoded=True)
+        inp, preds, _, dec_preds = learn_inf.get_preds(
+            dl=dl, with_input=True, with_decoded=True
+        )
         for pred in preds:
             results.append(pred)
         batch = []
 
 if len(batch) > 0:
     dl = learn_inf.dls.test_dl(batch, num_workers=0)
-    inp, preds, _, dec_preds = learn_inf.get_preds(dl=dl, with_input=True, with_decoded=True)
+    inp, preds, _, dec_preds = learn_inf.get_preds(
+        dl=dl, with_input=True, with_decoded=True
+    )
     for pred in preds:
         results.append(pred)
 
@@ -88,18 +104,25 @@ nothing_index = list(learn_inf.dls.vocab).index("nothing")
 possible_shots = []
 for i, row in enumerate(results):
     if row[nothing_index] < 0.5:
-        possible_shots.append((row[nothing_index].item(), x[i], vocab[row.argmax(dim=-1).item()]))
+        possible_shots.append(
+            (row[nothing_index].item(), x[i], vocab[row.argmax(dim=-1).item()])
+        )
 
 # print(possible_shots)
 
 from scipy import signal
+
 prob_something = [1 - frame[0] for frame in possible_shots]
-peaks, _ = signal.find_peaks(prob_something, distance=int(480/predict_every))
+peaks, _ = signal.find_peaks(prob_something, distance=int(480 / predict_every))
 print(peaks)
 
 import matplotlib.pyplot as plt
 
-plt.plot([possible_shots[peak][1] for peak in peaks], [prob_something[peak] for peak in peaks], "xr")
+plt.plot(
+    [possible_shots[peak][1] for peak in peaks],
+    [prob_something[peak] for peak in peaks],
+    "xr",
+)
 plt.plot([frame[1] for frame in possible_shots], prob_something)
 plt.show()
 

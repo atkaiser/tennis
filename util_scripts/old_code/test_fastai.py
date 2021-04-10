@@ -33,10 +33,12 @@
 
 from fastai.vision import *
 
-defaults.device = torch.device('cpu')
-path = Path('models/tennis_int')
+defaults.device = torch.device("cpu")
+path = Path("models/tennis_int")
 learn = load_learner(path)
 
-img = open_image('/Users/akaiser/Documents/workspace/tennis/data/sorted/side-angle/nothing/IMG_4230frame10116.jpg')
-pred_class,pred_idx,outputs = learn.predict(img)
+img = open_image(
+    "/Users/akaiser/Documents/workspace/tennis/data/sorted/side-angle/nothing/IMG_4230frame10116.jpg"
+)
+pred_class, pred_idx, outputs = learn.predict(img)
 print(pred_class)

@@ -5,10 +5,7 @@ import os
 import random
 import pathlib
 from os.path import isfile, join, splitext, basename
-from video_tools import (
-    get_movie_files,
-    get_total_num_of_frames
-)
+from video_tools import get_movie_files, get_total_num_of_frames
 
 """
 Script that takes a directory that has videos that have corresponding json files that list
@@ -72,7 +69,9 @@ def main(video_dir, output_dir, validation_percent):
             end_forward_motion_frame = int(
                 action["contact_frame"] + int(0.245 * end_range)
             )
-            for frame in get_sample(last_action_frame, int(action["start_frame"]), NUM_NOTHING_FRAMES):
+            for frame in get_sample(
+                last_action_frame, int(action["start_frame"]), NUM_NOTHING_FRAMES
+            ):
                 selected_frames[frame] = "nothing"
             for frame in get_sample(
                 int(action["start_frame"]),

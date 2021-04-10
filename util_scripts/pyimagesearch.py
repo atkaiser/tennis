@@ -6,6 +6,7 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", required=True, help="path to video")
@@ -32,7 +33,9 @@ while cap.isOpened():
     image = imutils.resize(image, width=min(400, image.shape[1]))
     orig = image.copy()
     # detect people in the image
-    (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.1)
+    (rects, weights) = hog.detectMultiScale(
+        image, winStride=(4, 4), padding=(8, 8), scale=1.1
+    )
     # draw the original bounding boxes
     # for (x, y, w, h) in rects:
     #     cv2.rectangle(orig, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -45,10 +48,15 @@ while cap.isOpened():
     for (xA, yA, xB, yB) in picks:
         width = xB - xA
         height = yB - yA
-        middle = (int((xA + xB)/2), int((yA + yB)/2))
+        middle = (int((xA + xB) / 2), int((yA + yB) / 2))
         radius = int(max(width, height) / 2)
-        cv2.rectangle(image, (middle[0] - radius, middle[1] - radius), (middle[0] + radius, middle[1] + radius),
-                      (0, 0, 255), 2)
+        cv2.rectangle(
+            image,
+            (middle[0] - radius, middle[1] - radius),
+            (middle[0] + radius, middle[1] + radius),
+            (0, 0, 255),
+            2,
+        )
         cv2.rectangle(image, (xA, yA), (xB, yB), (0, 255, 0), 2)
     # show some information on the number of bounding boxes
     # filename = imagePath[imagePath.rfind("/") + 1:]
@@ -59,8 +67,7 @@ while cap.isOpened():
     cv2.imshow("After NMS", image)
     pressed_key_value = cv2.waitKey(1)
     normalized_key_value = pressed_key_value & 0xFF
-    if normalized_key_value == ord('q'):
+    if normalized_key_value == ord("q"):
         break
-    elif normalized_key_value == ord('p'):
+    elif normalized_key_value == ord("p"):
         cv2.waitKey(0)
-

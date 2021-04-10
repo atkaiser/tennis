@@ -32,7 +32,9 @@ def get_video_fps(video_file_path):
     :return: The "video_fps" (see comment above) of the video
     """
     if not path.isfile(video_file_path):
-        raise Exception("Passed in video_path is not a file: {}".format(video_file_path))
+        raise Exception(
+            "Passed in video_path is not a file: {}".format(video_file_path)
+        )
 
     cap = cv2.VideoCapture(str(video_file_path))
     video_fps = cap.get(cv2.CAP_PROP_FPS)
@@ -76,8 +78,12 @@ def get_android_fps_from_ffmpeg(video_file_path):
 
 def get_movie_files(path, recurse=True, folders=None):
     """Get video files in `path` recursively, only in `folders`, if specified."""
-    movie_extensions = set(k for k, v in mimetypes.types_map.items() if v.startswith('video/'))
-    return get_files(path, extensions=movie_extensions, recurse=recurse, folders=folders)
+    movie_extensions = set(
+        k for k, v in mimetypes.types_map.items() if v.startswith("video/")
+    )
+    return get_files(
+        path, extensions=movie_extensions, recurse=recurse, folders=folders
+    )
 
 
 def get_total_num_of_frames(video_file_path):
@@ -127,10 +133,26 @@ def convert_frames_to_times(interesting_ranges, frames):
     return clip_times
 
 
+def get_frame(vid_cap, frame_num):
+    """
+    Return the specific frame from the VideoCapture.
+    """
+    vid_cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
+    grabbed, frame = vid_cap.read()
+    if grabbed:
+        return frame
+    else:
+        raise Exception("Could not get frame asked for: {}".format(frame_num))
+
+
 if __name__ == "__main__":
     # Some sort of tests
     test_movie_dir = "data/labled_training_vids"
     for movie in get_movie_files(test_movie_dir):
         video_fps = get_video_fps(movie)
         real_world_fps = get_real_world_fps(movie)
-        print("{}\n\tvideo_fps: {}\n\treal_fps: {}".format(movie, video_fps, real_world_fps))
+        print(
+            "{}\n\tvideo_fps: {}\n\treal_fps: {}".format(
+                movie, video_fps, real_world_fps
+            )
+        )

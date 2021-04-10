@@ -239,7 +239,9 @@ def state_change_helper(current_state, new_state, state_changes, current_frame):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Create json label files for all videos in a folder")
+    parser = argparse.ArgumentParser(
+        description="Create json label files for all videos in a folder"
+    )
     parser.add_argument(
         "--dir", help="Path to directory where all the training videos are."
     )

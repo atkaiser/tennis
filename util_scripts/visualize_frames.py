@@ -52,11 +52,20 @@ def main(video_file_path, original_fps, video_speed):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Create a label.json file for a video.")
+    parser = argparse.ArgumentParser(
+        description="Create a label.json file for a video."
+    )
     parser.add_argument("--video", help="Path to the video file")
     # parser.add_argument("--tmp_dir", help="Path to the temp dir", default="tmp")
-    parser.add_argument("--fps", type=int, default=240, help="The original fps of the video")
-    parser.add_argument("--speed", type=float, default=0.18, help="The speed to try and show the video at")
+    parser.add_argument(
+        "--fps", type=int, default=240, help="The original fps of the video"
+    )
+    parser.add_argument(
+        "--speed",
+        type=float,
+        default=0.18,
+        help="The speed to try and show the video at",
+    )
     args = parser.parse_args()
 
     main(args.video, args.fps, args.speed)

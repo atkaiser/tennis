@@ -27,9 +27,9 @@ size = (frame_width, frame_height)
 # Below VideoWriter object will create
 # a frame of above defined The output
 # is stored in 'filename.avi' file.
-result = cv2.VideoWriter('create_ml_training_data/mix.mp4',
-                         cv2.VideoWriter_fourcc(*'X264'),
-                         120, size)
+result = cv2.VideoWriter(
+    "create_ml_training_data/mix.mp4", cv2.VideoWriter_fourcc(*"X264"), 120, size
+)
 
 frame_num = 0
 while True:

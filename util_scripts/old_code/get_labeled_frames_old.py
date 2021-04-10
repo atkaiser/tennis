@@ -84,7 +84,7 @@ def main(video_dir, validation_percent):
         todo_videos.append(file)
 
     for i, file in enumerate(todo_videos[0:15]):
-        print("Doing {} of {} video".format(i+1, len(todo_videos)))
+        print("Doing {} of {} video".format(i + 1, len(todo_videos)))
         if file.startswith("."):
             continue
 
@@ -105,13 +105,33 @@ def main(video_dir, validation_percent):
         for action in all_actions:
             start_range = action["contact_frame"] - action["start_frame"]
             end_range = action["end_frame"] - action["contact_frame"]
-            for frame in get_sample(range(last_action_frame, int(action["start_frame"])), 3):
+            for frame in get_sample(
+                range(last_action_frame, int(action["start_frame"])), 3
+            ):
                 selected_frames[frame] = "nothing"
-            for frame in get_sample(range(int(action["start_frame"]), int(action["start_frame"] + int(0.87 * start_range))), 1):
+            for frame in get_sample(
+                range(
+                    int(action["start_frame"]),
+                    int(action["start_frame"] + int(0.87 * start_range)),
+                ),
+                1,
+            ):
                 selected_frames[frame] = action["label"] + "_set_up"
-            for frame in get_sample(range(int(action["start_frame"] + int(0.956 * start_range)), int(action["contact_frame"] + int(0.03 * end_range))), 2):
+            for frame in get_sample(
+                range(
+                    int(action["start_frame"] + int(0.956 * start_range)),
+                    int(action["contact_frame"] + int(0.03 * end_range)),
+                ),
+                2,
+            ):
                 selected_frames[frame] = action["label"] + "_contact"
-            for frame in get_sample(range(int(action["contact_frame"] + int(0.065 * end_range)), int(action["contact_frame"] + int(0.245 * end_range))), 2):
+            for frame in get_sample(
+                range(
+                    int(action["contact_frame"] + int(0.065 * end_range)),
+                    int(action["contact_frame"] + int(0.245 * end_range)),
+                ),
+                2,
+            ):
                 selected_frames[frame] = action["label"] + "_forward_follow_through"
             # for frame in get_sample(range(int(action["contact_frame"] + int(0.38 * end_range)), int(action["end_frame"])), 2):
             #     selected_frames[frame] = action["label"] + "_backward_follow_through"
@@ -148,7 +168,11 @@ def main(video_dir, validation_percent):
                         shot_type = category
 
                 frame_path = os.path.join(
-                    video_dir, "all_pics", folder_type, shot_type, "{}-{}.jpg".format(vid_name, int(frame_num))
+                    video_dir,
+                    "all_pics",
+                    folder_type,
+                    shot_type,
+                    "{}-{}.jpg".format(vid_name, int(frame_num)),
                 )
                 parent_dir = os.path.join(video_dir, "all_pics", folder_type, shot_type)
                 pathlib.Path(parent_dir).mkdir(parents=True, exist_ok=True)
@@ -165,9 +189,18 @@ def get_sample(possible_range, number_of_frames):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Create a label.json file for a video.")
-    parser.add_argument("--dir", help="Path to directory where all the training videos are.")
-    parser.add_argument("--validation_percent", type=float, default=0.2, help="What percent should go in validation set")
+    parser = argparse.ArgumentParser(
+        description="Create a label.json file for a video."
+    )
+    parser.add_argument(
+        "--dir", help="Path to directory where all the training videos are."
+    )
+    parser.add_argument(
+        "--validation_percent",
+        type=float,
+        default=0.2,
+        help="What percent should go in validation set",
+    )
     args = parser.parse_args()
 
     main(args.dir, args.validation_percent)
