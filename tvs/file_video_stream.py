@@ -55,6 +55,7 @@ class FileVideoStream:
                 # reached the end of the video file
                 if not grabbed:
                     self.stopped = True
+                    continue
 
                 if self.transform:
                     frame = self.transform(frame)
