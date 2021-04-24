@@ -4,6 +4,7 @@ from enum import Enum
 import time
 from collections import namedtuple
 import json
+import sys
 from os import remove
 from os.path import isfile, join, splitext, basename
 from video_tools import (
@@ -103,12 +104,21 @@ def main(video_dir, video_speed):
             if frame_num % 500 == 0:
                 print("Frame num: {} of {}".format(frame_num, num_of_frames))
 
-            if not this_loop_desired_time < MIN_LOOP_SHOW_MS:
-                cv2.imshow("frame", frame)
+            try:
+                if not this_loop_desired_time < MIN_LOOP_SHOW_MS:
+                    cv2.imshow("frame", frame)
+            except:
+                print(frame_num_and_frame)
+                print(frame_num)
+                print(frame)
+                e = sys.exc_info()[0]
+                raise e
+
 
             if frame_num == 0:
                 print("Ready?")
                 cv2.waitKey(0)
+                loop_start = milli_time()
 
             wait_start = milli_time()
             non_wait_time = wait_start - last_shown_frame_time
@@ -248,7 +258,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--speed",
         type=float,
-        default=0.25,
+        default=0.3,
         help="The speed (in real_world_time) to try and show the video at",
     )
     args = parser.parse_args()
